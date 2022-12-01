@@ -1,9 +1,10 @@
 export interface DbItem {
-  // sketch out interface here
+  message: string
 }
 
 export interface DbItemWithId extends DbItem {
   id: number;
+  
 }
 
 const db: DbItemWithId[] = [];
