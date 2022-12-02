@@ -10,7 +10,8 @@ import {
   updateDbItemById,
   deleteDbItemById,
   addDbCompletedItem,
-  getAllCompletedDbItems
+  getAllCompletedDbItems,
+  clearCompleted,
 } from "./db";
 import filePath from "./filePath";
 
@@ -85,6 +86,11 @@ app.delete<{ id: string }>("/items/:id", (req, res) => {
     const deletedItem = deleteDbItemById(matchingSignature.id);
     res.status(200).json(deletedItem);
   }
+});
+
+app.delete<{}>("/completed", (req, res) => {
+  clearCompleted();
+  res.status(200).json();
 });
 
 // PATCH /items/:id
