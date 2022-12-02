@@ -66,8 +66,8 @@ app.delete<{ id: string }>("/items/:id", (req, res) => {
   if (matchingSignature === "not found") {
     res.status(404).json(matchingSignature);
   } else {
-    deleteDbItemById(matchingSignature)
-    res.status(200).json(matchingSignature);
+    const deletedItem = deleteDbItemById(matchingSignature.id);
+    res.status(200).json(deletedItem);
   }
 });
 
