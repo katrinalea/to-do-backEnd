@@ -50,6 +50,15 @@ app.post<{}, {}, DbItem>("/items", (req, res) => {
   res.status(201).json(createdSignature);
 });
 
+// POST /items
+app.post<{}, {}, DbItem>("/items/completed", (req, res) => {
+  // to be rigorous, ought to handle non-conforming request bodies
+  // ... but omitting this as a simplification
+  const postData = req.body;
+  const createdCompletedSignature = addDbItem(postData);
+  res.status(201).json(createdCompletedSignature);
+});
+
 // GET /items/:id
 app.get<{ id: string }>("/items/:id", (req, res) => {
   const matchingSignature = getDbItemById(parseInt(req.params.id));
