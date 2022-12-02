@@ -9,6 +9,8 @@ import {
   DbItem,
   updateDbItemById,
   deleteDbItemById,
+  addDbCompletedItem,
+  getAllCompletedDbItems
 } from "./db";
 import filePath from "./filePath";
 
@@ -50,13 +52,18 @@ app.post<{}, {}, DbItem>("/items", (req, res) => {
   res.status(201).json(createdSignature);
 });
 
-// POST /items
-app.post<{}, {}, DbItem>("/items/completed", (req, res) => {
+app.get("/completed", (req, res) => {
+  const allSignatures = getAllCompletedDbItems();
+  res.status(200).json(allSignatures);
+});
+
+// POST /completed
+app.post<{}, {}, DbItem>("/completed", (req, res) => {
   // to be rigorous, ought to handle non-conforming request bodies
   // ... but omitting this as a simplification
   const postData = req.body;
-  const createdCompletedSignature = addDbItem(postData);
-  res.status(201).json(createdCompletedSignature);
+  const createdSignature = addDbCompletedItem(postData);
+  res.status(201).json(createdSignature);
 });
 
 // GET /items/:id

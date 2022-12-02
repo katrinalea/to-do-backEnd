@@ -7,6 +7,7 @@ export interface DbItemWithId extends DbItem {
 }
 
 const db: DbItemWithId[] = [];
+const dbCompleted: DbItemWithId[] = [];
 
 /** Variable to keep incrementing id of database items */
 let idCounter = 0;
@@ -42,6 +43,15 @@ export const addDbItem = (data: DbItem): DbItemWithId => {
   db.push(newEntry);
   return newEntry;
 };
+export const addDbCompletedItem = (data: DbItem): DbItemWithId => {
+  const newEntry: DbItemWithId = {
+    id: ++idCounter,
+    ...data,
+  };
+  dbCompleted.push(newEntry);
+  return newEntry;
+};
+
 
 /**
  * Deletes a database item with the given id
@@ -85,6 +95,10 @@ const findIndexOfDbItemById = (id: number): number | "not found" => {
 export const getAllDbItems = (): DbItemWithId[] => {
   return db;
 };
+export const getAllCompletedDbItems = (): DbItemWithId[] => {
+  return dbCompleted;
+};
+
 
 /**
  * Locates a database item by a given id
