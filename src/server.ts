@@ -34,31 +34,26 @@ dotenv.config();
 // use the environment variable PORT, or 4000 as a fallback
 const PORT_NUMBER = process.env.PORT ?? 4000;
 
-// API info page
-app.get("/", (req, res) => {
-  const pathToFile = filePath("../public/index.html");
-  res.sendFile(pathToFile);
-});
+// // API info page
+// app.get("/", (req, res) => {
+//   const pathToFile = filePath("../public/index.html");
+//   res.sendFile(pathToFile);
+// });
 
 // GET /items
 app.get("/items", async (req, res) => {
   const text = "select * from toDo";
   const allItems = await client.query(text);
-
   //const allSignatures = getAllDbItems();
-  if (allItems) {
+  
     res.status(200).json({
       status: "success",
       data: {
         allItems,
-      },
-    });
-  } else {
-    res.status(404).json({
-      status: "fail",
-    });
-  }
-});
+      }
+    })
+  })
+   
 
 // POST /items
 app.post<{}, {}, DbItem>("/items", async (req, res) => {
