@@ -14,10 +14,12 @@ import {
   clearCompleted,
 } from "./db";
 import filePath from "./filePath";
+import { Client } from "pg"; //need to install
 
-// loading in some dummy items into the database
-// (comment out if desired, or change the number)
-//addDummyDbItems(0);
+const client = new Client(process.env.DATABASE_URL);
+
+//TODO: this request for a connection will not necessarily complete before the first HTTP request is made!
+client.connect();
 
 const app = express();
 
@@ -39,18 +41,50 @@ app.get("/", (req, res) => {
 });
 
 // GET /items
-app.get("/items", (req, res) => {
-  const allSignatures = getAllDbItems();
-  res.status(200).json(allSignatures);
+app.get("/items", async (req, res) => {
+  const text = "select * from toDo";
+  const allItems = await client.query(text);
+
+  //const allSignatures = getAllDbItems();
+  if (allItems) {
+    res.status(200).json({
+      status: "success",
+      data: {
+        allItems,
+      },
+    });
+  } else {
+    res.status(404).json({
+      status: "fail",
+    });
+  }
 });
 
 // POST /items
-app.post<{}, {}, DbItem>("/items", (req, res) => {
+app.post<{}, {}, DbItem>("/items", async (req, res) => {
   // to be rigorous, ought to handle non-conforming request bodies
   // ... but omitting this as a simplification
-  const postData = req.body;
-  const createdSignature = addDbItem(postData);
-  res.status(201).json(createdSignature);
+  //const postData = req.body;
+  //const createdSignature = addDbItem(postData);
+  const { message } = req.body;
+  if (typeof message === "string") {
+    const text = "insert into toDo (message) values ($1)";
+    const values = [message];
+    const createItem = await client.query(text, values);
+    res.status(201).json({
+      status: "success",
+      data: {
+        signature: createItem,
+      },
+    });
+  } else {
+    res.status(400).json({
+      status: "fail",
+      data: {
+        message: " A string value is required",
+      },
+    });
+  }
 });
 
 app.get("/completed", (req, res) => {
