@@ -39,14 +39,15 @@ app.get("/items", async (req, res) => {
 // POST /items
 app.post("/items", async (req, res) => {
   const { message } = req.body;
+  console.log("whole req.bdoy", req.body)
   if (typeof message === "string") {
-    const text = "insert into toDo (message) values ($1)";
+    const text = "insert into toDo (message) values ($1) returning *";
     const values = [message];
-    const createItem = await client.query(text, values);
+    const dbResult = await client.query(text, values);
     res.status(201).json({
       status: "success",
       data: {
-        signature: createItem,
+        signature: dbResult.rows,
       },
     });
   } else {
@@ -61,13 +62,10 @@ app.post("/items", async (req, res) => {
 
 app.get("/completed", async (req, res) => {
   const text = "select * from toDo where completed = 'true'";
-  const allItems = await client.query(text);
-  
-    res.status(200).json({
+  const dbResponse = await client.query(text);
+  res.status(200).json({
       status: "success",
-      data: {
-        allItems,
-      }
+      data: dbResponse.rows
     })
   })
 
@@ -86,12 +84,10 @@ app.delete("/items/:id", async (req, res) => {
 
 app.delete("/completed", async (req, res) => {
   const text = "delete from toDo where completed = 'true";
-  const allItems = await client.query(text);
+  const dbResponse = await client.query(text);
     res.status(200).json({
-      status: "success",
-      data: {
-        allItems,
-      }
+      status: "success"
+      //data: dbResponse.rows
     })
   })
   
