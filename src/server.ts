@@ -38,17 +38,15 @@ app.get("/items", async (req, res) => {
 
 // POST /items
 app.post("/items", async (req, res) => {
-  const { message } = req.body;
+  const { message, completed } = req.body;
   console.log("whole req.bdoy", req.body)
   if (typeof message === "string") {
-    const text = "insert into toDo (message) values ($1) returning *";
-    const values = [message];
+    const text = "insert into toDo (message, completed) values ($1, $2) returning *";
+    const values = [message, completed];
     const dbResult = await client.query(text, values);
     res.status(201).json({
       status: "success",
-      data: {
-        signature: dbResult.rows,
-      },
+      data: dbResult.rows
     });
   } else {
     res.status(400).json({
