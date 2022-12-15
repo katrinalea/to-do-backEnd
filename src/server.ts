@@ -67,25 +67,46 @@ app.get("/completed", async (req, res) => {
     })
   })
 
+app.patch("/items/:id", async (req, res) => {
+  const {id} = req.body
+  const text = "update todo set completed = 'true' where id = $1"
+  const values = [id]
+  const dbResponse = await client.query(text, values)
+  res.status(200).json({
+    status: "success",
+    data: dbResponse.rows
+  })
+})
+
+app.patch("/items/update/:id", async (req, res) => {
+  const {id, message} = req.body
+  const text = "update todo set message = $2 where id = $1"
+  const values = [id, message]
+  const dbResponse = await client.query(text, values)
+  res.status(200).json({
+    status: "success",
+    data: dbResponse.rows
+  })
+})
+
+
 
 // DELETE /items/:id
 app.delete("/items/:id", async (req, res) => {
-  const id = req.body
+  const id = req.body.id
   const text = "delete from toDo where id = $1";
   const value = [id]
-  const dbResponse = await client.query(text, value);
+  await client.query(text, value);
     res.status(200).json({
-      status: "success",
-      data: dbResponse.rows
+      status: "success"
     })
   })
 
 app.delete("/completed", async (req, res) => {
-  const text = "delete from toDo where completed = 'true";
-  const dbResponse = await client.query(text);
+  const text = "delete from toDo where completed = 'true'";
+  await client.query(text);
     res.status(200).json({
-      status: "success"
-      //data: dbResponse.rows
+      status: "success",
     })
   })
   
