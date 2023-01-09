@@ -76,7 +76,7 @@ app.patch("/items/:id", async (req, res) => {
   });
 });
 
-app.patch("/items", async (req, res) => {
+app.patch("/updates", async (req, res) => {
   const { id, message } = req.body;
   try {
   const text = "update todo set message = '$2' where id = $1";
