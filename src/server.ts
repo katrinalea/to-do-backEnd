@@ -76,15 +76,18 @@ app.patch("/items/:id", async (req, res) => {
   });
 });
 
-app.patch("/items/update/:id", async (req, res) => {
+app.patch("/items", async (req, res) => {
   const { id, message } = req.body;
-  const text = "update todo set message = $2 where id = $1";
+  try {
+  const text = "update todo set message = '$2' where id = $1";
   const values = [id, message];
   const dbResponse = await client.query(text, values);
   res.status(200).json({
     status: "success",
     data: dbResponse.rows,
-  });
+  }); } catch(err){
+    console.log(err)
+  }
 });
 
 // DELETE /items/:id
