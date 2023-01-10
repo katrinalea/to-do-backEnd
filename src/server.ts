@@ -17,6 +17,8 @@ app.use(cors());
 // use the environment variable PORT, or 4000 as a fallback
 const PORT_NUMBER = process.env.PORT ?? 4000;
 
+console.log("hello");
+
 app.get("/", (req, res) => {
   res.status(200).json({
     status: "success",
@@ -57,6 +59,7 @@ app.post("/items", async (req, res) => {
 });
 
 app.get("/completed", async (req, res) => {
+  console.log("entered complete");
   const text = "select * from toDo where completed = 'true'";
   const dbResponse = await client.query(text);
   res.status(200).json({
@@ -64,6 +67,27 @@ app.get("/completed", async (req, res) => {
     data: dbResponse.rows,
   });
 });
+
+// app.patch("/items/:id", async (req, res) => {
+//   console.log("entered patch")
+//   const { id, message } = req.body;
+//   if (!message){
+//   const text = "update todo set completed = 'true' where id = $1";
+//   const values = [id];
+//   const dbResponse = await client.query(text, values);
+//   res.status(200).json({
+//     status: "success",
+//     data: dbResponse.rows,
+//   }); } else {
+//   const text = "update todo set message = '$1' where id = $2 returning *";
+//   const values = [message, id];
+//   const dbResponse = await client.query(text, values);
+//   res.status(200).json({
+//     status: "success",
+//     data: dbResponse.rows,
+//   })
+//   }
+// });
 
 app.patch("/items/:id", async (req, res) => {
   const { id } = req.body;
@@ -76,17 +100,24 @@ app.patch("/items/:id", async (req, res) => {
   });
 });
 
-app.patch("/updates/:id", async (req, res) => {
-  const { id, message } = req.body;
+interface update {
+  id: number;
+  message: string;
+}
+app.patch("/updates", async (req, res) => {
+  console.log("entered update patch", req.body);
+  const { id, message }: update = req.body;
+  console.log(id, message, req.body);
   try {
-  const text = "update todo set message = '$2' where id = $1";
-  const values = [id, message];
-  const dbResponse = await client.query(text, values);
-  res.status(200).json({
-    status: "success",
-    data: dbResponse.rows,
-  }); } catch(err){
-    console.log(err)
+    const text = "update todo set message = $1 where id = $2";
+    const values = [message, id];
+    const dbResponse = await client.query(text, values);
+    res.status(200).json({
+      status: "success",
+      data: dbResponse.rows,
+    });
+  } catch (err) {
+    console.error(err);
   }
 });
 
